@@ -3,88 +3,90 @@ import sys
 import time
 
 
-def csvUser(length, headers):
-
-    newHeaders = ('Role', 'Last Name', 'First Name', 'Email Address', 'Course Code', 'Section Code', 'Term')
-    hardlocation = [59, 62, 6, 0, 5]
+def findIndexes(srchTerm, headerRow):
     location = []
-    header = ['Primary Instructor', 'Primary Instr Email Address', 'Course', 'Term Code', 'Seq Numb']
-    data = []
-    index = 0
-    # Finds the index of the desired columns
+    while not len(srchTerm) is 0:
+        index = 0
+        srchFound = False
+        for cell in headerRow:
+            if cell.value == srchTerm[0]:
+                location.append(index)
+                srchFound = True
+                srchTerm.pop(0)
+                break
+            index += 1
+        if not srchFound:
+            location.append(srchTerm[0])
+            srchTerm.pop(0)
+    return location
 
-    for i in headers:
-        if i.value in header:
-            print(i)
-            location.append(index)
-        index += 1
 
-    print(location)
-    for j in length:
-        temp = []
-        for k in location[:-1]:
-            temp.append(worksheet.cell(j, k).value)
-        sectionCode = worksheet.cell(j, 5).value
-        temp.append(worksheet.cell(j, 0).value + ' ' + sectionCode)
-        temp[3], temp[4] = temp[4], temp[3]
-        data.append(temp)
+def csvUser(length, headerRow):
+    newHeaders = ['Role', 'Last Name', 'First Name', 'Email Address', 'Course Code', 'Section Code', 'Term']
+    srchHeader = ['Primary Instructor', 'Primary Instr Email Address', 'Course', 'Term Code', 'Seq Numb']
+    location = findIndexes(srchHeader, headerRow)
 
-    f = open('Users.csv', 'w')
-    for m in newHeaders[:-1]:
-        f.write(m + ',')
-    else:
-        f.write(newHeaders[-1])
-    f.write('\n')
-    for l in data:
-        for k in l[:-1]:
-            if ',' in k:
-                f.write('Instructor' + ',')
-                a, b = k.split(', ')
-                f.write(a + ',')
-                f.write(b + ',')
+    fullCourseList = []
+    for row in length:
+        # TODO: "Instructor" is hardcoded here because it is not in the Echo spreadsheet.
+        courseLine = ["Instructor"]
+        for columnIndex in location:
+            currentCell = worksheet.cell(row, columnIndex).value
+            if ',' in currentCell:
+                currentCell = currentCell.split(', ')
+                courseLine.append(currentCell[0])
+                courseLine.append(currentCell[1])
             else:
-                f.write(k + ',')
-        else:
-            f.write(l[-1])
-        f.write('\n')
-    f.close()
+                courseLine.append(currentCell)
+        fullCourseList.append(courseLine)
+
+    with open('Users.csv', 'w') as f:
+        f.write(','.join(newHeaders) + '\n')
+        for course in fullCourseList:
+            f.write(','.join(course) + '\n')
 
 
 def csvSchedule(length):
+    srchHeader = ['Drexel University', '3675 Market', 'Room Code', 'Ptrm Start Date', 'Begin Time', 'End Time', "D1|V1",
+                  "Course", 'Term Code', 'Primary Instr Email Address', "Other Instr Email", "Yes", 'Day',
+                  "Ptrm End Date", "HD", "[live stream place holder]", "[closed captioning placeholder]"]
+    # Is it okay to merge COURSE and SECTION together? CS 260 001 instead of CS 260 | 001?
+    # Are all courses repeating? I would assume so.
+    # How to check if live stream?
+    # Is closed captioning column used at all?
+    newHeaders = ['Campus', 'Buildings', 'Room', 'Start Date', 'Recording Start Time', 'Recording End Time', 'Inputs',
+                  'Title', 'Course Code', 'Section Code', 'Term', 'Instructor Email', 'Guest Instructor Email',
+                  'Repeating', 'Repeat Patterns', 'End Date', 'Quality', 'Live Stream', 'Closed Captioning']
+    location = findIndexes(srchHeader, headerRow)
 
-    headers = ('Primary Instructor', 'Primary Instr Email Address' 'Course', 'Term Code')
-    newHeaders = ('Term Code', 'Last Name', 'First Name', 'Email Address', 'Course Code')
-    location = [0, 59, 62, 6]
-    data = []
-
-    for j in length:
-        temp = []
-        for k in location:
-            temp.append(worksheet.cell(j, k).value)
-        data.append(temp)
+    fullCourseList = []
+    for row in length:
+        courseLine = []
+        for columnIndex in location:
+            courseLine.append(worksheet.cell(row, columnIndex).value)
+        fullCourseList.append(courseLine)
 
     f = open('Schedule.csv', 'w')
     for m in newHeaders:
         f.write(m + ',')
     f.write('\n')
-    for l in data:
-        for k in l:
-            if ',' in k:
-                a,b = k.split(', ', 1)
+    for l in fullCourseList:
+        for columnIndex in l:
+            if ',' in columnIndex:
+                a, b = columnIndex.split(', ', 1)
                 f.write(str(a) + ',')
                 f.write(str(b) + ',')
-            elif ' ' in k:
-                k = k.split(' ')
-                k = str(k[0] + ' ' + k[1])
-                f.write(str(k) + ',')
+            elif ' ' in columnIndex:
+                columnIndex = columnIndex.split(' ')
+                columnIndex = str(columnIndex[0] + ' ' + columnIndex[1])
+                f.write(str(columnIndex) + ',')
             else:
-                f.write(str(k) + ',')
+                f.write(str(columnIndex) + ',')
         f.write('\n')
     f.close()
 
 
 def csvCourses(length):
-
     headers = ('Primary Instr Email Address' 'Course', 'Term Code')
     newHeaders = ('Organization', 'Department', 'Course Code', 'Course Name',
                   'Section Code', 'Primary Instructor Email', 'Secondary Instructor Email')
@@ -126,8 +128,7 @@ if __name__ == "__main__":
     workbook = xlrd.open_workbook(filename, on_demand=True)
     worksheet = workbook.sheet_by_index(0)
     headerRow = worksheet.row(0)
-    length = worksheet.nrows
-    length = range(1, length)
+    length = range(1, worksheet.nrows)
 
     if type == '1':
         csvUser(length, headerRow)
