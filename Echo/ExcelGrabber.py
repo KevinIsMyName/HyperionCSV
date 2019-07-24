@@ -47,44 +47,66 @@ def csvUser(length, headerRow):
 
 
 def csvSchedule(length):
-    srchHeader = ['Drexel University', '3675 Market', 'Room Code', 'Ptrm Start Date', 'Begin Time', 'End Time', "D1|V1",
-                  "Course", 'Term Code', 'Primary Instr Email Address', "Other Instr Email", "Yes", 'Day',
-                  "Ptrm End Date", "HD", "[live stream place holder]", "[closed captioning placeholder]"]
-    # Is it okay to merge COURSE and SECTION together? CS 260 001 instead of CS 260 | 001?
-    # Are all courses repeating? I would assume so.
-    # How to check if live stream?
-    # Is closed captioning column used at all?
-    newHeaders = ['Campus', 'Buildings', 'Room', 'Start Date', 'Recording Start Time', 'Recording End Time', 'Inputs',
-                  'Title', 'Course Code', 'Section Code', 'Term', 'Instructor Email', 'Guest Instructor Email',
-                  'Repeating', 'Repeat Patterns', 'End Date', 'Quality', 'Live Stream', 'Closed Captioning']
-    location = findIndexes(srchHeader, headerRow)
+    newHeaders = [
+        "Campus,Building,Room,Start Date,Recording Start Time,Recording End Time,Inputs,Title,Course Code,Section Code,",
+        "Term,Instructor Email,Guest Instructor Email,Repeating,Repeat Patterns,End Date,Quality,Live Stream,",
+        "Closed Captioning"]
+    srchHeader1 = ['Room Code', 'Ptrm Start Date', 'Begin Time', 'End Time']
+    srchHeader2 = ["Course", 'Term Code', 'Primary Instr Email Address', "Other Instr Email"]
+    srchHeader3 = ['Day']
+    srchHeader4 = ["Ptrm End Date"]
+    location1 = findIndexes(srchHeader1, headerRow)
+    location2 = findIndexes(srchHeader2, headerRow)
+    location3 = findIndexes(srchHeader3, headerRow)
+    location4 = findIndexes(srchHeader4, headerRow)
 
     fullCourseList = []
     for row in length:
-        courseLine = []
-        for columnIndex in location:
-            courseLine.append(worksheet.cell(row, columnIndex).value)
+        courseLine = ["Drexel University", "3675 Market"]
+
+        for columnIndex in location1:
+            currentCell = worksheet.cell(row, columnIndex).value
+            print(worksheet.cell(row, columnIndex))
+            print(currentCell)
+
+            if '/' in currentCell:
+                currentCell = currentCell.split('/')
+                currentCell.insert(0, currentCell[-1])
+                currentCell.pop()
+                currentCell = '-'.join(currentCell)
+            elif currentCell[-1] == "0" and not " " in currentCell and len(currentCell) == 4:
+                currentCell = currentCell[0:2] + ":" + currentCell[2:] + ":00"
+            courseLine.append(currentCell)
+
+        courseLine.append("D1|V1")
+
+        for columnIndex in location2:
+            currentCell = worksheet.cell(row, columnIndex).value
+            if " " in currentCell:
+                courseNameBroken = currentCell.split(" ")
+                currentCell = courseNameBroken[0] + " " + courseNameBroken[1]
+                courseLine.append(currentCell)
+            courseLine.append(currentCell)
+
+        courseLine.append("Yes")
+
+        currentCell = worksheet.cell(row, location3[0]).value
+        currentCell = '|'.join(list(currentCell))
+        courseLine.append(currentCell)
+
+        currentCell = worksheet.cell(row, location4[0]).value
+        currentCell = currentCell.split('/')
+        currentCell.insert(0, currentCell[-1])
+        currentCell.pop()
+        currentCell = '-'.join(currentCell)
+        coursLine.append(currentCell)
+
         fullCourseList.append(courseLine)
 
-    f = open('Schedule.csv', 'w')
-    for m in newHeaders:
-        f.write(m + ',')
-    f.write('\n')
-    for l in fullCourseList:
-        for columnIndex in l:
-            if ',' in columnIndex:
-                a, b = columnIndex.split(', ', 1)
-                f.write(str(a) + ',')
-                f.write(str(b) + ',')
-            elif ' ' in columnIndex:
-                columnIndex = columnIndex.split(' ')
-                columnIndex = str(columnIndex[0] + ' ' + columnIndex[1])
-                f.write(str(columnIndex) + ',')
-            else:
-                f.write(str(columnIndex) + ',')
-        f.write('\n')
-    f.close()
-
+    with open('Schedule.csv', 'w') as f:
+        f.write(','.join(newHeaders) + '\n')
+        for course in fullCourseList:
+            f.write(','.join(course) + '\n')
 
 def csvCourses(length):
     headers = ('Primary Instr Email Address' 'Course', 'Term Code')
