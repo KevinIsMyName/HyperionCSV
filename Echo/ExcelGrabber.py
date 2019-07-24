@@ -47,6 +47,7 @@ def csvUser(length, headerRow):
 
 
 def csvSchedule(length):
+    # TODO: Fix the new headers so that they are all separate elements
     newHeaders = [
         "Campus,Building,Room,Start Date,Recording Start Time,Recording End Time,Inputs,Title,Course Code,Section Code,",
         "Term,Instructor Email,Guest Instructor Email,Repeating,Repeat Patterns,End Date,Quality,Live Stream,",
@@ -68,7 +69,8 @@ def csvSchedule(length):
             currentCell = worksheet.cell(row, columnIndex).value
             print(worksheet.cell(row, columnIndex))
             print(currentCell)
-
+            # TODO: Properly format the time and date. We might have to splt the search header/queries so that time is
+            #  on its own. We may have to change the "workbook mode".
             if '/' in currentCell:
                 currentCell = currentCell.split('/')
                 currentCell.insert(0, currentCell[-1])
@@ -99,8 +101,9 @@ def csvSchedule(length):
         currentCell.insert(0, currentCell[-1])
         currentCell.pop()
         currentCell = '-'.join(currentCell)
-        coursLine.append(currentCell)
-
+        courseLine.append(currentCell)
+        # TODO: Hardcode append HD. If time persists, we will code the "Live Stream" column in as well (which requires
+        #  crosschecking with Hyperion.xlsx. However, in the mean time, we shall leave it to the human.
         fullCourseList.append(courseLine)
 
     with open('Schedule.csv', 'w') as f:
