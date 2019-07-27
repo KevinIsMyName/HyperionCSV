@@ -56,7 +56,7 @@ def csvSchedule(length):
     srchHeader2 = ["Course", 'Term Code', 'Primary Instr Email Address', "Other Instr Email"]
     srchHeader3 = ['Day']
     srchHeader4 = ["Ptrm End Date"]
-    location1 = findIndexes(srchHeader1, headerRow)
+    location1 = findIndexes(srchHeader1, headerRow)  # TODO: Do we need to pass through the headerRow from main?
     location2 = findIndexes(srchHeader2, headerRow)
     location3 = findIndexes(srchHeader3, headerRow)
     location4 = findIndexes(srchHeader4, headerRow)
@@ -111,34 +111,41 @@ def csvSchedule(length):
         for course in fullCourseList:
             f.write(','.join(course) + '\n')
 
+
 def csvCourses(length):
-    headers = ('Primary Instr Email Address' 'Course', 'Term Code')
-    newHeaders = ('Organization', 'Department', 'Course Code', 'Course Name',
-                  'Section Code', 'Primary Instructor Email', 'Secondary Instructor Email')
-    location = [6, 0, 62]
-    data = []
+    srchHeaders = ['Course', 'Term Code', 'Primary Instr Email Address',
+                   'Other Instr Email']  # removed  in list because i manipulated the data with brute force/manually
+    newHeaders = ['Organization', 'Department', 'Course Code', 'Course Name', 'Section Code', 'Term', 'Section Code',
+                  'Primary Instructor Email', 'Secondary Instructor Email']
+    location = findIndexes(srchHeaders, headerRow)  # TODO: Do we need to pass through the headerRow from main?
+    fullCourseList = []
 
-    for j in length:
-        temp = []
-        for k in location:
-            temp.append(worksheet.cell(j, k).value)
-        data.append(temp)
+    for row in length:
+        courseLine = ['College of Computing & Informatics']
+        fullCourseName = worksheet.cell(row, location[0]).value
+        fullCourseName = fullCourseName.split()
+        dept = fullCourseName[0]
+        courseNum = fullCourseName[1]
+        courseSect = fullCourseName[2]
+        courseName = dept + " " + courseNum
+        term = worksheet.cell(row, location[1]).value
+        sectionCode = term + " " + courseSect
 
-    f = open('Courses.csv', 'w')
-    for m in newHeaders:
-        f.write(m + ',')
-    f.write('\n')
-    for l in data:
-        for k in l:
-            if ' ' in k:
-                a, b, c = k.split(' ')
-                f.write(str(a) + ',')
-                f.write((a + ' ' + b) + ',')
-                f.write((a + ' ' + b) + ',')
-            else:
-                f.write(str(k) + ',')
-        f.write('\n')
-    f.close()
+        courseLine.append(dept)
+        courseLine.append(courseName)
+        courseLine.append(
+            courseName)  # again, because one is for "Course Code" and the other is for "Course Name" which are identical
+        courseLine.append(term)
+        courseLine.append(sectionCode)
+        courseLine.append(worksheet.cell(row, location[2]).value)
+        courseLine.append(worksheet.cell(row, location[3]).value)
+
+        fullCourseList.append(courseLine)
+
+        with open('Courses.csv', 'w') as f:
+            f.write(','.join(newHeaders) + '\n')
+            for course in fullCourseList:
+                f.write(','.join(course) + '\n')
 
 
 if __name__ == "__main__":
