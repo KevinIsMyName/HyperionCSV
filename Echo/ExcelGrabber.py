@@ -40,7 +40,7 @@ def csvUser(length, headerRow):
                 courseLine.append(currentCell)
         fullCourseList.append(courseLine)
 
-    with open('Users.csv', 'w') as f:
+    with open('../output/Users.csv', 'w') as f:
         f.write(','.join(newHeaders) + '\n')
         for course in fullCourseList:
             f.write(','.join(course) + '\n')
@@ -106,7 +106,7 @@ def csvSchedule(length):
         #  crosschecking with Hyperion.xlsx. However, in the mean time, we shall leave it to the human.
         fullCourseList.append(courseLine)
 
-    with open('Schedule.csv', 'w') as f:
+    with open('../output/Schedule.csv', 'w') as f:
         f.write(','.join(newHeaders) + '\n')
         for course in fullCourseList:
             f.write(','.join(course) + '\n')
@@ -142,7 +142,7 @@ def csvCourses(length):
 
         fullCourseList.append(courseLine)
 
-        with open('Courses.csv', 'w') as f:
+        with open('../output/Courses.csv', 'w') as f:
             f.write(','.join(newHeaders) + '\n')
             for course in fullCourseList:
                 f.write(','.join(course) + '\n')
