@@ -1,7 +1,16 @@
+# Billy Roveran & Kevin Wu
+# wfr23@drexel.edu, kw875@drexel.edu
+# https://gitlab.cci.drexel.edu/wfr23/CCI-Commons
+
+# ExcelGrabber.py
+# Converted a formatted spreadsheet listing classes and schedules to .csv's for Echo360 not in UTF-8 format
+# For Drexel University Use
+
+# Python 3.7.2
+
 import xlrd
 import sys
 import time
-
 
 def findIndexes(srchTerm, headerRow):
     location = []
