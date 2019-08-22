@@ -28,7 +28,6 @@ def csvUser(length, headerRow):
 
     fullCourseList = []
     for row in length:
-        # TODO: "Instructor" is hardcoded here because it is not in the Echo spreadsheet.
         courseLine = ["Instructor"]
         for columnIndex in location:
             currentCell = worksheet.cell(row, columnIndex).value
@@ -40,14 +39,13 @@ def csvUser(length, headerRow):
                 courseLine.append(currentCell)
         fullCourseList.append(courseLine)
 
-    with open("../output/Users.csv", "w") as f:
+    with open(filename.replace(".xlsx", " ") + "Users.csv", "w") as f:
         f.write(",".join(newHeaders) + "\n")
         for course in fullCourseList:
             f.write(",".join(course) + "\n")
 
 
 def csvSchedule(length, headerRow):
-    # TODO: Fix the new headers so that they are all separate elements
     newHeaders = [
         "Campus", "Building", "Room", "Start Date", "Recording Start Time", "Recording End Time", "Inputs", "Title",
         "Course Code", "Section Code",
@@ -137,18 +135,18 @@ def csvSchedule(length, headerRow):
 
         fullCourseList.append(courseLine)
 
-    with open("../output/Schedule.csv", "w") as f:
+    with open(filename.replace(".xlsx", " ") + "Schedule.csv", "w") as f:
         f.write(",".join(newHeaders) + "\n")
         for course in fullCourseList:
             f.write(",".join(course) + ",,\n")
 
 
-def csvCourses(length):
+def csvCourses(length, headerRow):
     srchHeaders = ["Course", "Term Code", "Primary Instr Email Address",
                    "Other Instr Email"]  # removed  in list because i manipulated the data with brute force/manually
     newHeaders = ["Organization", "Department", "Course Code", "Course Name", "Section Code", "Term", "Section Code",
                   "Primary Instructor Email", "Secondary Instructor Email"]
-    location = findIndexes(srchHeaders, headerRow)  # TODO: Do we need to pass through the headerRow from main?
+    location = findIndexes(srchHeaders, headerRow)
     fullCourseList = []
 
     for row in length:
@@ -173,7 +171,7 @@ def csvCourses(length):
 
         fullCourseList.append(courseLine)
 
-        with open("../output/Courses.csv", "w") as f:
+        with open(filename.replace(".xlsx", " ") + "Courses.csv", "w") as f:
             f.write(",".join(newHeaders) + "\n")
             for course in fullCourseList:
                 f.write(",".join(course) + "\n")
