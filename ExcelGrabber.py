@@ -14,7 +14,7 @@ import time
 
 def findIndexes(srchTerm, headerRow):
     location = []
-    while not len(srchTerm) is 0:
+    while len(srchTerm) != 0:
         index = 0
         srchFound = False
         for cell in headerRow:
@@ -191,7 +191,7 @@ if __name__ == "__main__":
                  "\n1. Users"
                  "\n2. Schedule"
                  "\n3. Courses"
-                 "\n: ")
+                 "\n")
     start = time.time()
 
     filename = sys.argv[1]
