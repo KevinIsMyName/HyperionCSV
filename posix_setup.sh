@@ -3,7 +3,7 @@ echo -e "setup.sh assumes that you are running Python 3+ and have pip 19+ instal
 rm -rf venv
 python -m venv venv
 ./venv/Scripts/activate
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 echo -e -n "\n\n\n\n\n\nRun HyperionCSV.py with the following commands: \n"
 echo -e -n "\t./venv/Scripts/activate OR begin.sh (this is autorun after shell.sh)\n"
 echo -e -n "\tpython HyperionCSV.py <PATH_TO_ECHO_XLSX>\n"
