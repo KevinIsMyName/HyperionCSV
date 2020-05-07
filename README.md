@@ -1,6 +1,6 @@
 ### **Quick Start:**
-1. Install just about any version of Python 3.
-2. Set up your virtual environment with the command `pip install -r requirements.txt`
-3. Enter the virtual environment with `.\venv\Scripts\activate`
-4. Run the command: `python HyperionSucks.py <PATH_TO_HYPERION_XLSX>`
-5. Follow the steps listed in the program.
+1. Install just about any version of Python 3. And pip19+, but it usually comes with it.
+2. Run the appropriate setup script.
+	- Unix users use `unix_setup.sh`
+	- Windows users use `win_setup.bat`
+3. Follow the steps listed in the setup script

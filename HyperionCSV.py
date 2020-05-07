@@ -1,10 +1,9 @@
 # Kevin Wu (kw875@drexel.edu)
 # https://gitlab.cci.drexel.edu/wfr23/CCI-Commons
-# XLSXtoCSV
+# HyperionCSV.py
 # Converted a formatted spreadsheet listing classes and schedules to .csv's for Echo360 not in UTF-8 format
-# Made for Drexel University Use
+# Made for Drexel University use
 
-import datetime as dt
 import sys
 import os
 import xlrd
@@ -14,12 +13,12 @@ try:
     file_name = sys.argv[1]
     workbook = xlrd.open_workbook(file_name, on_demand=False)
 except IndexError:
-    print("No file name provided.")
-    print("Usage: python HyperionSucks.py <file_name>")
+    print("No file name provided")
+    print("Usage: python HyperionCSV.py <file_name>")
     sys.exit(-1)
 except FileNotFoundError:
     print("File not found")
-    print("Usage: python HyperionSucks.py <file_name>")
+    print("Usage: python HyperionCSV.py <file_name>")
     sys.exit(-1)
 
 worksheet = workbook.sheet_by_index(0)
@@ -29,7 +28,7 @@ header_row = worksheet.row(0)
 email_i = -1
 course_i = -1
 seq_num_i = -1
-subj_code_i = -1  # Department
+subj_code_i = -1
 crse_num_i = -1
 other_email_i = -1
 room_code_i = -1
@@ -37,10 +36,7 @@ day_i = -1
 start_date_i = -1
 rec_start_i = -1
 rec_end_i = -1
-crse_code_i = -1
-sec_code_i = -1
 term_i = -1
-title_i = -1
 end_date_i = -1
 
 i = 0
@@ -68,14 +64,8 @@ while i < len(header_row):
         rec_start_i = i
     elif cell.value == "End Time":
         rec_end_i = i
-    elif cell.value == "Course Code":
-        crse_code_i = i
-    elif cell.value == "Section Code":
-        sec_code_i = i
     elif cell.value == "Term Code":
         term_i = i
-    elif cell.value == "Term":
-        title_i = i
     elif cell.value == "Ptrm End Date":
         end_date_i = i
     i += 1
@@ -169,3 +159,7 @@ with open(file_name + " courses.csv", "w") as output:
         output.write(worksheet.cell(i, other_email_i).value + ",")  # Secondary Instructor Email
         output.write("\n")
 
+    # Any CS or INFO course that is 500 or above for the course number,
+    # & where the following is true:
+    # There is an 001 and a 900 section being taught by the same instructor.
+    # Or there is an 002 and a 901 section being taught by the same instructor.

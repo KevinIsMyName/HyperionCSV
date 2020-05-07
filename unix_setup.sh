@@ -5,6 +5,6 @@ python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
 echo -e -n "\n\n\nRun HyperionCSV.py with the following commands: \n"
-echo -e -n "\tsource ./venv/Scripts/activate\n"
-echo -e -n "\tpython HyperionCSV.py PATH_TO_ECHO_XLSX\n"
+echo -e -n "    source venv/bin/activate\n"
+echo -e -n "    python3 HyperionCSV.py PATH_TO_ECHO_XLSX\n"
 echo -e -n "See more information in README.md\n"
